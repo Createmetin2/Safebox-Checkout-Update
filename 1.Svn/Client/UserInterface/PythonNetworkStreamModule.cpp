@@ -1,4 +1,57 @@
 //Find
+PyObject* netSendSafeboxCheckinPacket(PyObject* poSelf, PyObject* poArgs)
+{
+	...
+}
+
+///Change
+PyObject* netSendSafeboxCheckinPacket(PyObject* poSelf, PyObject* poArgs)
+{
+	TItemPos InventoryPos;
+	int iSafeBoxPos;
+#if defined(SAFEBOX_CHECKOUT_UPDATE)
+	bool SelectPosAuto = false;
+#endif
+
+	switch (PyTuple_Size(poArgs))
+	{
+#if defined(SAFEBOX_CHECKOUT_UPDATE)
+	case 1:
+		InventoryPos.window_type = INVENTORY;
+		if (!PyTuple_GetInteger(poArgs, 0, &InventoryPos.cell))
+			return Py_BuildException();
+		SelectPosAuto = true;
+		break;
+#endif
+	case 2:
+		InventoryPos.window_type = INVENTORY;
+		if (!PyTuple_GetInteger(poArgs, 0, &InventoryPos.cell))
+			return Py_BuildException();
+		if (!PyTuple_GetInteger(poArgs, 1, &iSafeBoxPos))
+			return Py_BuildException();
+		break;
+	case 3:
+		if (!PyTuple_GetInteger(poArgs, 0, &InventoryPos.window_type))
+			return Py_BuildException();
+		if (!PyTuple_GetInteger(poArgs, 1, &InventoryPos.cell))
+			return Py_BuildException();
+		if (!PyTuple_GetInteger(poArgs, 2, &iSafeBoxPos))
+			return Py_BuildException();
+		break;
+
+	}
+
+	CPythonNetworkStream& rns=CPythonNetworkStream::Instance();
+#if defined(SAFEBOX_CHECKOUT_UPDATE)
+	rns.SendSafeBoxCheckinPacket(InventoryPos, iSafeBoxPos, SelectPosAuto);
+#else
+	rns.SendSafeBoxCheckinPacket(InventoryPos, iSafeBoxPos);
+#endif
+
+	return Py_BuildNone();
+}
+
+//Find
 PyObject* netSendSafeboxCheckoutPacket(PyObject* poSelf, PyObject* poArgs)
 {
 	...

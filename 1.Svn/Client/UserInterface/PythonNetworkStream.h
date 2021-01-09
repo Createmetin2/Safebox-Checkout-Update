@@ -1,4 +1,14 @@
 //Find
+		bool SendSafeBoxCheckinPacket(TItemPos InventoryPos, BYTE bySafeBoxPos);
+		
+///Change
+#if defined(SAFEBOX_CHECKOUT_UPDATE)
+		bool SendSafeBoxCheckinPacket(TItemPos InventoryPos, BYTE bySafeBoxPos, bool SelectPosAuto);
+#else
+		bool SendSafeBoxCheckinPacket(TItemPos InventoryPos, BYTE bySafeBoxPos);
+#endif
+
+//Find
 		bool SendSafeBoxCheckoutPacket(BYTE bySafeBoxPos, TItemPos InventoryPos);
 		
 ///Change

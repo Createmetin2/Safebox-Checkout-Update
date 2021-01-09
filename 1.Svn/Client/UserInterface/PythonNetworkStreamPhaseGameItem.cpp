@@ -1,4 +1,32 @@
 //Find
+bool CPythonNetworkStream::SendSafeBoxCheckinPacket(TItemPos InventoryPos, BYTE bySafeBoxPos)
+{
+	...
+}
+
+///Change
+#if defined(SAFEBOX_CHECKOUT_UPDATE)
+bool CPythonNetworkStream::SendSafeBoxCheckinPacket(TItemPos InventoryPos, BYTE bySafeBoxPos, bool SelectPosAuto)
+#else
+bool CPythonNetworkStream::SendSafeBoxCheckinPacket(TItemPos InventoryPos, BYTE bySafeBoxPos)
+#endif
+{
+	__PlayInventoryItemDropSound(InventoryPos);
+
+	TPacketCGSafeboxCheckin kSafeboxCheckin;
+	kSafeboxCheckin.bHeader = HEADER_CG_SAFEBOX_CHECKIN;
+	kSafeboxCheckin.ItemPos = InventoryPos;
+	kSafeboxCheckin.bSafePos = bySafeBoxPos;
+#if defined(SAFEBOX_CHECKOUT_UPDATE)
+	kSafeboxCheckin.SelectPosAuto = SelectPosAuto;
+#endif
+	if (!Send(sizeof(kSafeboxCheckin), &kSafeboxCheckin))
+		return false;
+
+	return SendSequence();
+}
+
+//Find
 bool CPythonNetworkStream::SendSafeBoxCheckoutPacket(BYTE bySafeBoxPos, TItemPos InventoryPos)
 {
 	...
