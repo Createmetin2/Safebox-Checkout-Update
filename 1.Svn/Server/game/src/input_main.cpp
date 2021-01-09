@@ -1,10 +1,8 @@
 //Find in void CInputMain::SafeboxCheckout(LPCHARACTER ch, const char * c_pData, bool bMall)
-	LPITEM pkItem = pkSafebox->Get(p->bSafePos);
-
-	if (!pkItem)
+	if (!ch->IsEmptyItemGrid(p->ItemPos, pkItem->GetSize()))
 		return;
 		
-///Add
+///Change
 #if defined(SAFEBOX_CHECKOUT_UPDATE)
 	if (p->SelectPosAuto)
 	{
@@ -13,4 +11,13 @@
 		else
 			p->ItemPos = TItemPos(INVENTORY, ch->GetEmptyInventory(pkItem->GetSize()));
 	}
+	if (!ch->IsEmptyItemGrid(p->ItemPos, pkItem->GetSize()))
+	{
+		if (p->SelectPosAuto)
+			ch->ChatPacket(CHAT_TYPE_INFO, "You don't have enough space.");
+		return;
+	}
+#else
+	if (!ch->IsEmptyItemGrid(p->ItemPos, pkItem->GetSize()))
+		return;
 #endif
